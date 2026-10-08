@@ -1,0 +1,281 @@
+% !TeX program = pdflatex
+% 中央财经大学 Beamer 模板（非官方）
+% 版式参考：Zhuming Shi 的 PKU-Beamer-Template（CC BY 4.0）。
+% https://www.overleaf.com/latex/templates/bei-da-zhong-wen-mo-ban-pku-beamer-template/kfxpbtzrqhrn
+% 原模板来源：Federico Zenith 的 SINTEF Presentation；Liu Qilong 的衍生主题。
+% 本版独立实现主题；校徽与校名图片位于 assets 文件夹。
+% 校徽来源：https://www.cufe.edu.cn/info/1029/1066.htm
+% 默认使用 pdfLaTeX；中文通过 CJKutf8 与 gbsn 字体排版。
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{CJKutf8}
+\usepackage{amsmath,amssymb,booktabs,graphicx,tikz}
+\usetikzlibrary{positioning,arrows.meta}
+\usefonttheme[onlymath]{serif}
+
+% 设计用屏幕配色，可在这里统一调整；非官方标准色声明。
+\definecolor{cufeblue}{HTML}{123F68}
+\definecolor{cufedark}{HTML}{092C4C}
+\definecolor{cufelight}{HTML}{EDF3F8}
+\definecolor{cufegold}{HTML}{B78A46}
+\definecolor{cufetext}{HTML}{263442}
+\definecolor{cufegray}{HTML}{657587}
+\colorlet{maincolor}{cufeblue}
+\setbeamercolor{normal text}{fg=cufetext,bg=white}
+\setbeamercolor{structure}{fg=cufeblue}
+\setbeamercolor{alerted text}{fg=cufegold}
+\setbeamercolor{frametitle}{fg=cufeblue,bg=white}
+\setbeamercolor{framesubtitle}{fg=cufegray}
+\setbeamercolor{block title}{fg=white,bg=cufeblue}
+\setbeamercolor{block body}{fg=cufetext,bg=cufelight}
+\setbeamercolor{block title alerted}{fg=white,bg=cufegold}
+\setbeamercolor{block body alerted}{fg=cufetext,bg=cufegold!10}
+\setbeamercolor{block title example}{fg=white,bg=cufedark}
+\setbeamercolor{block body example}{fg=cufetext,bg=cufelight}
+\setbeamerfont{title}{size=\LARGE,series=\bfseries}
+\setbeamerfont{subtitle}{size=\large}
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\small}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{blocks}[default]
+\setbeamertemplate{itemize item}{\raisebox{.15ex}{\scriptsize$\blacktriangleright$}}
+\setbeamertemplate{itemize subitem}{\scriptsize$\bullet$}
+\setbeamertemplate{enumerate items}[default]
+\setbeamersize{text margin left=8mm,text margin right=8mm}
+\hypersetup{colorlinks=true,urlcolor=cufeblue,linkcolor=cufeblue}
+
+% 校徽与书法校名使用透明背景 PNG；校名通过 trim 去除多余透明留白。
+\newcommand{\cufeseal}[1]{\includegraphics[width=#1]{assets/cufe-logo-transparent.png}}
+\newcommand{\cufewordmark}[1]{\includegraphics[width=#1,trim=0 154bp 0 148bp,clip]{assets/cufe-wordmark-transparent.png}}
+
+\setbeamertemplate{frametitle}{%
+  \vspace{2mm}
+  \begin{beamercolorbox}[wd=\textwidth]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle\strut\par
+    \ifx\insertframesubtitle\empty\else
+      {\usebeamerfont{framesubtitle}\color{cufegray}\insertframesubtitle\par}
+    \fi
+    \vspace{1.2mm}{\color{cufeblue}\rule{\textwidth}{.6pt}}
+  \end{beamercolorbox}
+}
+\newcommand{\cufefootertext}{中央财经大学}
+\newcommand{\footlinepayoff}[1]{\renewcommand{\cufefootertext}{#1}}
+\newcommand{\footlinecolor}[1]{%
+  \if\relax\detokenize{#1}\relax
+    \setbeamercolor{cufefoot}{fg=cufegray,bg=white}%
+  \else
+    \setbeamercolor{cufefoot}{fg=white,bg=#1}%
+  \fi
+}
+\footlinecolor{cufeblue}
+\setbeamertemplate{footline}{%
+  % Beamer 在正文中文环境启动前测量页脚，需在此独立启用中文。
+  \begin{CJK*}{UTF8}{gbsn}
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.7mm,dp=1.4mm,leftskip=8mm,rightskip=8mm]{cufefoot}
+    \fontsize{6.5}{8}\selectfont
+    \cufefootertext\hspace{3mm}|\hspace{3mm}\insertshorttitle
+    \hfill\insertframenumber\,/\,\inserttotalframenumber
+  \end{beamercolorbox}
+  \end{CJK*}
+}
+
+% 可选校园图片；不设置时使用纯蓝色斜切面。
+\newcommand{\cufecoverimage}{}
+\newcommand{\cufesetbackground}[1]{\renewcommand{\cufecoverimage}{#1}}
+% 兼容原模板的带星号封面图片接口。
+\makeatletter
+\newcommand{\titlebackground}{\@ifstar\cufesetbackground\cufesetbackground}
+\makeatother
+
+\setbeamertemplate{title page}{%
+  \begin{tikzpicture}[remember picture,overlay,x=\paperwidth,y=\paperheight]
+    \begin{scope}[shift={(current page.south west)}]
+      \fill[cufeblue] (.59,0)--(1,0)--(1,1)--(.77,1)--cycle;
+      \ifx\cufecoverimage\empty\else
+        \begin{scope}
+          \clip (.59,0)--(1,0)--(1,1)--(.77,1)--cycle;
+          \node[anchor=center,inner sep=0] at (.81,.5)
+            {\includegraphics[height=\paperheight]{\cufecoverimage}};
+          \fill[cufeblue,opacity=.55] (.59,0) rectangle (1,1);
+        \end{scope}
+      \fi
+      \node[anchor=north west,inner sep=0] at (.065,.94)
+        {\cufeseal{.95cm}};
+      \node[anchor=west,inner sep=0]
+        at (.145,.895) {\cufewordmark{.28\paperwidth}};
+      \node[anchor=west,text=cufegray,inner sep=0,font=\fontsize{5.7}{7}\selectfont]
+        at (.145,.820) {CENTRAL UNIVERSITY OF FINANCE AND ECONOMICS};
+      \node[anchor=west,inner sep=0] at (.065,.49) {%
+        \begin{minipage}{.48\paperwidth}
+          {\color{cufeblue}\usebeamerfont{title}\inserttitle\par}
+          \vspace{2mm}
+          {\color{cufeblue}\usebeamerfont{subtitle}\insertsubtitle\par}
+          \vspace{5mm}
+          {\small\bfseries\insertauthor\par}
+          \vspace{2mm}
+          {\small\insertinstitute\par}
+          \vspace{2mm}
+          {\small\insertdate\par}
+        \end{minipage}};
+      \node[anchor=south west,text=cufegray,font=\fontsize{7}{9}\selectfont,inner sep=0]
+        at (.065,.06) {忠诚\quad 团结\quad 求实\quad 创新};
+    \end{scope}
+  \end{tikzpicture}
+}
+\renewcommand{\maketitle}{\begin{frame}[plain,noframenumbering]\titlepage\end{frame}}
+
+\newcommand{\cufechapter}[2]{%
+  \begin{frame}[plain,noframenumbering]
+    \begin{tikzpicture}[remember picture,overlay,x=\paperwidth,y=\paperheight]
+      \begin{scope}[shift={(current page.south west)}]
+        \fill[cufeblue] (0,0) rectangle (1,1);
+        \fill[cufedark] (.72,0)--(1,0)--(1,1)--(.90,1)--cycle;
+        \node[anchor=west,text=white,font=\fontsize{40}{44}\selectfont\bfseries]
+          at (.075,.66) {#1};
+        \draw[cufegold,line width=1.2pt] (.08,.52)--(.22,.52);
+        \node[anchor=west,text=white,font=\LARGE\bfseries] at (.075,.40) {#2};
+        \node[anchor=south east,inner sep=0] at (.93,.08) {\cufeseal{1.1cm}};
+      \end{scope}
+    \end{tikzpicture}
+  \end{frame}
+}
+\newcommand{\backmatter}{%
+  \begin{frame}[plain,noframenumbering]
+    \begin{tikzpicture}[remember picture,overlay,x=\paperwidth,y=\paperheight]
+      \begin{scope}[shift={(current page.south west)}]
+        \fill[white] (0,0) rectangle (1,1);
+        \node at (.5,.73) {\cufeseal{1.25cm}};
+        \node[text=cufeblue,font=\LARGE\bfseries] at (.5,.48) {感谢聆听，敬请指正};
+        \node[text=cufetext,font=\small] at (.5,.32) {\insertauthor\quad |\quad 中央财经大学};
+        \node[text=cufegray,font=\small] at (.5,.18) {忠诚\quad 团结\quad 求实\quad 创新};
+      \end{scope}
+    \end{tikzpicture}
+  \end{frame}
+}
+
+% ---------- 从这里修改报告信息 ----------
+\title[学术报告]{报告标题}
+\subtitle{报告副标题}
+\author{作者姓名}
+\institute{中央财经大学\quad 学院／研究机构}
+\date{2026年10月}
+% \titlebackground*{assets/campus.jpg} % 如需校园照片，上传图片并取消注释。
+
+\begin{document}
+\begin{CJK*}{UTF8}{gbsn}
+\maketitle
+
+\begin{frame}{报告目录}
+  \tableofcontents
+\end{frame}
+
+\section{研究背景}
+\cufechapter{01}{研究背景}
+\begin{frame}{研究背景与核心问题}
+  \framesubtitle{用一页说明研究动机、问题与价值}
+  \begin{itemize}
+    \item \textbf{研究背景：}简要介绍现实背景和已有研究。
+    \item \textbf{核心问题：}明确本报告希望回答的问题。
+    \item \textbf{研究价值：}说明理论贡献或实践意义。
+  \end{itemize}
+  \vspace{3mm}
+  \begin{block}{本页要点}
+    每页围绕一个核心观点组织内容，标题尽量直接表达结论。
+  \end{block}
+\end{frame}
+
+\begin{frame}{研究思路与分析框架}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{.46\textwidth}
+      \begin{block}{研究设计}
+        \begin{itemize}
+          \item 识别关键变量
+          \item 构建理论框架
+          \item 选择合适方法
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{.49\textwidth}
+      \centering
+      \begin{tikzpicture}[
+        box/.style={draw=cufeblue,fill=cufelight,text width=3.4cm,
+          minimum height=.85cm,align=center,font=\small},
+        link/.style={-{Stealth},thick,cufeblue},node distance=5mm]
+        \node[box] (a) {研究问题};
+        \node[box,below=of a] (b) {理论机制与研究假设};
+        \node[box,below=of b] (c) {实证检验与政策启示};
+        \draw[link] (a)--(b);
+        \draw[link] (b)--(c);
+      \end{tikzpicture}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{研究方法与结果}
+\cufechapter{02}{研究方法与结果}
+\begin{frame}{模型设定与变量说明}
+  \begin{block}{示例：面板数据回归模型}
+    \[
+      y_{it}=\alpha+\beta x_{it}+\boldsymbol{\gamma}^{\mathsf T}
+      \mathbf{Z}_{it}+\mu_i+\lambda_t+\varepsilon_{it}
+    \]
+  \end{block}
+  \begin{itemize}
+    \item $y_{it}$：被解释变量；$x_{it}$：核心解释变量。
+    \item $\mathbf{Z}_{it}$：控制变量；$\mu_i$、$\lambda_t$：个体与时间固定效应。
+    \item $\beta$：待估计的核心参数；识别解释需结合研究设计。
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{主要结果展示}
+  \framesubtitle{以下为排版示例，所有数值均为演示数据}
+  \centering
+  \begin{tabular}{lccc}
+    \toprule
+    变量 & 模型（1） & 模型（2） & 模型（3） \\
+    \midrule
+    核心解释变量 & 0.125 & 0.118 & 0.109 \\
+    标准误 & (0.042) & (0.039) & (0.037) \\
+    控制变量 & 否 & 是 & 是 \\
+    个体固定效应 & 否 & 否 & 是 \\
+    样本量 & 1,200 & 1,200 & 1,200 \\
+    \bottomrule
+  \end{tabular}
+  \vspace{4mm}
+  \begin{block}{结果解读}
+    在此解释估计结果、经济含义以及结论成立的条件。
+  \end{block}
+\end{frame}
+
+\section{结论与讨论}
+\cufechapter{03}{结论与讨论}
+\begin{frame}{主要结论与后续方向}
+  \begin{enumerate}
+    \item \textbf{主要发现：}用简明语言回答最初提出的问题。
+    \item \textbf{实践启示：}给出与研究证据相匹配的建议。
+    \item \textbf{研究局限：}说明数据、方法和适用范围的限制。
+  \end{enumerate}
+  \vspace{3mm}
+  \begin{alertblock}{后续方向}
+    在此补充进一步研究的问题或讨论议题。
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{模板使用说明}
+  \begin{itemize}
+    \item 默认使用 \textbf{pdfLaTeX}；请一并上传模板包内的 assets 文件夹。
+    \item 修改导言区的标题、作者、学院与日期，再替换示例正文。
+    \item 使用 \verb|\cufechapter{01}{章节标题}| 插入章节页。
+    \item 使用 \verb|\footlinecolor{cufeblue}| 调整页脚配色。
+    \item 本模板为个人制作的中财风格版本，非学校官方发布。
+  \end{itemize}
+  \vspace{2mm}
+  {\scriptsize 版式参考：\href{https://www.overleaf.com/latex/templates/bei-da-zhong-wen-mo-ban-pku-beamer-template/kfxpbtzrqhrn}{PKU-Beamer-Template}，Zhuming Shi，CC BY 4.0。\\
+  原始主题来源：Federico Zenith（SINTEF Presentation）、Liu Qilong。\\
+  校徽使用中央财经大学官网公开标识；本版配色为屏幕设计用色。}
+\end{frame}
+
+\backmatter
+\end{CJK*}
+\end{document}
